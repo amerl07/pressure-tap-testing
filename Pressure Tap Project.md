@@ -203,8 +203,6 @@ Optional:
 * Temporary mounting and packaging  
 * Limited testing conditions
 
-The goal is engineering-level validation, not high-precision instrumentation.
-
 ---
 
 ## **Tasks to be Completed**

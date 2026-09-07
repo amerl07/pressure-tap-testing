@@ -1,7 +1,7 @@
 clear; clc; close all;
 
 %% Load Data
-data = readtable('run000.csv');
+data = readtable('run000.csv'); % REPLACE THIS WITH THE FILE YOU WANT TO PLOT
 
 t        = data.time_ms / 1000;
 pitot    = data.pitot_pa;

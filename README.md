@@ -128,7 +128,7 @@ Once data is safely off the board, flash `Logging.ino` again before your next ru
 
 ## 6. Analyze the data
 
-Open `PressureDataPlots.m` in MATLAB, pointed at a dumped `runXXX.csv`. It applies spike removal and smoothing, masks out stopped/idle periods, and plots pitot pressure, tap pressure, airspeed, and Cp over time, along with summary stats (max airspeed, mean Cp, etc.).
+Open `PressureDataPlots.m` in MATLAB, pointed at a dumped `runXXX.csv`, and run the script. It applies spike removal and smoothing, masks out stopped/idle periods, and plots pitot pressure, tap pressure, airspeed, and Cp over time, along with summary stats (max airspeed, mean Cp, etc.).
 
 ---
 
