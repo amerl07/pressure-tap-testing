@@ -148,3 +148,9 @@ Open `PressureDataPlots.m` in MATLAB, pointed at a dumped `runXXX.csv`, and run 
 | `esp32_dump.py` | PC-side script to capture dumped files as real CSVs, with delete option |
 | `check_logs.py` | PC-side script to check what run files exist on the board without a full dump |
 | `PressureDataPlots.m` | MATLAB script to clean, plot, and summarize a run's data |
+
+## Next Up TODO
+- Decide mounting point: 1) above top panel, 2) behind steering wheel, 3) under steering
+- Make mounting
+- Use shorter breadboard
+- Seal the wires
