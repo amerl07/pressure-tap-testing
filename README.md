@@ -1,4 +1,4 @@
-# C-Channel Pressure Tap Validation — Setup Guide
+# Pressure Tap Validation — Setup Guide
 
 This guide walks through wiring, powering, flashing, running, and retrieving data from the ESP32-based pressure tap logger. It assumes you're starting from a bare ESP32 Feather V2, two 4525DO pressure sensor breakouts, a breadboard, and a 3.7V LiPo battery.
 

@@ -2,6 +2,7 @@ import serial
 import serial.tools.list_ports
 import time
 import os
+from datetime import datetime
 
 # Auto-detect ESP32 port
 def find_esp32_port():
@@ -15,9 +16,9 @@ def find_esp32_port():
     return None
 
 # Settings
-BAUD_RATE = 115200
-OUTPUT_DIR = os.path.expanduser("~/Desktop/esp32_data")
+OUTPUT_DIR = os.path.expanduser(f"~/Desktop/esp32_data/{datetime.now():%m%d_%H%M}")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+BAUD_RATE = 115200
 
 port = find_esp32_port()
 if port is None:
