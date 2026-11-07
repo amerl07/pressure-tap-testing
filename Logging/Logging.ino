@@ -16,8 +16,6 @@ float zero2 = 0;
 File dataFile;
 bool logging = false;
 bool wasPressed = false;
-unsigned long lastDebounceTime = 0;
-const unsigned long debounceDelay = 200;  // ms — ignore button changes faster than this
 
 float readPressure(TwoWire &bus) {
   bus.requestFrom(0x28, 2);
@@ -32,6 +30,31 @@ float readPressure(TwoWire &bus) {
     return pressure;
   }
   return NAN;
+}
+
+// 新增：校准时跳过坏读数。50 次里至少 40 次有效才算成功。
+bool calibrate(TwoWire &bus, float &zero, int &good) {
+  float sum = 0;
+  good = 0;
+  for (int i = 0; i < 50; i++) {
+    float p = readPressure(bus);
+    if (!isnan(p)) {
+      sum += p;
+      good++;
+    }
+    delay(20);
+  }
+  if (good < 40) return false;
+  zero = sum / good;
+  return true;
+}
+
+// 新增：快速闪烁 = 传感器错误
+void errorBlink() {
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(LED_PIN, HIGH); delay(50);
+    digitalWrite(LED_PIN, LOW);  delay(50);
+  }
 }
 
 void setup() {
@@ -55,14 +78,21 @@ void setup() {
 
   Serial.println("Calibrating... keep sensors still");
   delay(1000);
-  float sum1 = 0, sum2 = 0;
-  for (int i = 0; i < 50; i++) {
-    sum1 += readPressure(I2C_1);
-    sum2 += readPressure(I2C_2);
-    delay(20);
+
+  // 新增：两个传感器都校准成功才继续，否则报错并重试
+  bool ok1 = false, ok2 = false;
+  while (true) {
+    int good1 = 0, good2 = 0;
+    ok1 = calibrate(I2C_1, zero1, good1);
+    ok2 = calibrate(I2C_2, zero2, good2);
+    Serial.printf("Pitot valid samples: %d/50, Tap valid samples: %d/50\n", good1, good2);
+    if (ok1 && ok2) break;
+    if (!ok1) Serial.println("ERROR: Pitot sensor not responding (bus 22/20)");
+    if (!ok2) Serial.println("ERROR: Tap sensor not responding (bus 14/32)");
+    Serial.println("Retrying calibration...");
+    errorBlink();
   }
-  zero1 = sum1 / 50.0;
-  zero2 = sum2 / 50.0;
+
   Serial.print("Zero 1: "); Serial.println(zero1);
   Serial.print("Zero 2: "); Serial.println(zero2);
   Serial.println("Calibration done.");
@@ -75,42 +105,40 @@ void setup() {
 void loop() {
   bool buttonPressed = (digitalRead(BOOT_BUTTON) == LOW);
 
-  if (buttonPressed != wasPressed && (millis() - lastDebounceTime) > debounceDelay) {
-    lastDebounceTime = millis();
-    wasPressed = buttonPressed;
+  if (buttonPressed && !wasPressed) {
+    wasPressed = true;
 
-    if (buttonPressed) {
-      if (!logging) {
-        char filename[20];
-        int fileNum = 0;
-        do {
-          snprintf(filename, sizeof(filename), "/run%03d.csv", fileNum++);
-        } while (LittleFS.exists(filename));
+    if (!logging) {
+      char filename[20];
+      int fileNum = 0;
+      do {
+        snprintf(filename, sizeof(filename), "/run%03d.csv", fileNum++);
+      } while (LittleFS.exists(filename));
 
-        dataFile = LittleFS.open(filename, "w");
-        if (!dataFile) {
-          Serial.println("Failed to open file");
-          return;
-        }
-        dataFile.println("time_ms,pitot_pa,tap_pa,airspeed_ms,Cp");
-        logging = true;
-        Serial.print("Logging started: ");
-        Serial.println(filename);
-        Serial.println("Press BOOT button to STOP logging.");
-
-      } else {
-        dataFile.flush();
-        dataFile.close();
-        logging = false;
-        Serial.println("Logging stopped safely. You can now unplug.");
-        Serial.println("Press BOOT button to start a new run.");
-
-        // Solid LED off = logging stopped, safe to unplug
-        digitalWrite(LED_PIN, LOW);
+      dataFile = LittleFS.open(filename, "w");
+      if (!dataFile) {
+        Serial.println("Failed to open file");
+        return;
       }
+      dataFile.println("time_ms,pitot_pa,tap_pa,airspeed_ms,Cp");
+      logging = true;
+      Serial.print("Logging started: ");
+      Serial.println(filename);
+      Serial.println("Press BOOT button to STOP logging.");
+
+    } else {
+      dataFile.flush();
+      dataFile.close();
+      logging = false;
+      Serial.println("Logging stopped safely. You can now unplug.");
+      Serial.println("Press BOOT button to start a new run.");
+
+      // Solid LED off = logging stopped, safe to unplug
+      digitalWrite(LED_PIN, LOW);
     }
   }
 
+  if (!buttonPressed) wasPressed = false;
   if (!logging) return;
 
   // Blink LED while logging
