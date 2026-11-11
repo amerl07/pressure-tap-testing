@@ -1,0 +1,12 @@
+# OS / editor junk
+.DS_Store
+*.asv
+__pycache__/
+*.pyc
+
+# Generated archive of processed_results_package/ (rebuild with make_results_package.m)
+*.zip
+
+# Car telemetry exports (20–80 MB; only used to cross-check lap alignment).
+# Keep locally or on the team drive; GitHub warns above 50 MB.
+track_test_results/autoX_*.csv
