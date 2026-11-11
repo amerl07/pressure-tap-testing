@@ -7,7 +7,7 @@ An ESP32 logs a pitot-static sensor and one undertray pressure tap on the car. F
 | **Task**                                           | Go to                                                                                                                                                                                        |
 | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Understand the project, method and current results | [`PROJECT_OVERVIEW.md`](PROJECT_OVERVIEW.md)                                                                                                                                                 |
-| Wire, flash, run the logger and pull data off it   | [`HARDWARE_SETUP.md`](HARDWARE_SETUP.md)                                                                                                                                                     |
+| Build (perfboard), wire, flash, run the logger and pull data off it | [`HARDWARE_SETUP.md`](HARDWARE_SETUP.md)                                                                                                                                                     |
 | See the Nov 7–8 Alameda track test results         | [`track_test_results/run_comparison.md`](track_test_results/run_comparison.md) and [`track_test_results/processed_results_package/`](track_test_results/processed_results_package/README.md) |
 | Know how laps were matched to the logger data      | [`track_test_results/LAP_ALIGNMENT.md`](track_test_results/LAP_ALIGNMENT.md)                                                                                                                 |
 
@@ -18,7 +18,7 @@ An ESP32 logs a pitot-static sensor and one undertray pressure tap on the car. F
 ```
 ├── README.md                     ← this index
 ├── PROJECT_OVERVIEW.md       ← project plan, method, math, results, task list
-├── HARDWARE_SETUP.md             ← wiring, power, flashing, logging, data retrieval
+├── HARDWARE_SETUP.md             ← sensor facts, perfboard wiring, tubing, power, flashing, logging, data retrieval, hardware TODO
 ├── perfboard wiring diagram.png
 │
 ├── Logging/Logging.ino           ← main firmware: logs both sensors to flash (BOOT button = start/stop)
